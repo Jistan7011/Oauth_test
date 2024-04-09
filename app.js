@@ -1,9 +1,13 @@
-let mysql = require('mysql2')
+//express
 const express = require("express");
-
-const server = express();
+const app = express();
+//route 객체 사용을 위해 변수 할당
+const router=express.Router();
 
 const port =3000;
+
+//mysql
+let mysql = require('mysql2')
 
 // .env파일 접근
 let connection = mysql.createConnection({
@@ -20,10 +24,11 @@ connection.connect((err)=>{
   console.log('MYSQL 접속 성공!')
 })
 
-server.get('/', (req,res) => {
-  res.send('hello world')
-})
+app.get("/", (req,res) =>{
+  res.status(200);
+  res.send("Hello Node!")
+});
 
-server.listen(port, ()=>{
-  console.log(`example app listening on port ${port}`)
-})
+app.listen(port,()=>{
+  console.log(`${port}번 포트에서 서버 실행중`)
+});
