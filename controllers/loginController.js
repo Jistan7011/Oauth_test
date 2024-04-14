@@ -1,8 +1,10 @@
 const asyncHandler = require("express-async-handler");
-const User =require("../models/userModel")
+const User=require("../models/userModel");
 const bcrypt = require("bcrypt"); //비밀번호 암호화
 const { Mongoose } = require("mongoose");
-
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET;
 
 // @desc Get Login page
 // @route GET /
@@ -27,9 +29,12 @@ const loginUser = asyncHandler(async(req,res)=>{
         return res.status(401).render("login",{ok: false, message: "비밀번호가 틀렸습니다."})
       }
     }
+    const token = jwt.sign({id:loginUser},jwtSecret)
+    res.cookie('token', token, {httpOnly:true})
   }
   res.status(201).send("로그인 성공!")
 });
+
 
 // @desc get Join page
 // @route get /join
@@ -59,4 +64,11 @@ const joinUser = asyncHandler(async(req,res)=>{
   }
 });
 
-module.exports={getLogin,loginUser, getJoin, joinUser }
+// @desc logout
+// @route Get /logout
+const logout =(req,res) =>{
+  res.clearCookie("token");
+  res.redirect("/");
+}
+
+module.exports={getLogin,loginUser, getJoin, joinUser, logout }
